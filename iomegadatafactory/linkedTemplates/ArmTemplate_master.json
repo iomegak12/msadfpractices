@@ -15,6 +15,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSQLDBLinkedService'"
 		},
+		"AzureSQLDWLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSQLDWLinkedService'"
+		},
+		"AzureBlobStorageLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
+		},
 		"AzureDLSLinkedService_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://iomegadls.dfs.core.windows.net"
@@ -53,8 +61,14 @@
 					"AzureDLSLinkedService_accountKey": {
 						"value": "[parameters('AzureDLSLinkedService_accountKey')]"
 					},
+					"AzureBlobStorageLinkedService_connectionString": {
+						"value": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
+					},
 					"AzureSQLDBLinkedService_connectionString": {
 						"value": "[parameters('AzureSQLDBLinkedService_connectionString')]"
+					},
+					"AzureSQLDWLinkedService_connectionString": {
+						"value": "[parameters('AzureSQLDWLinkedService_connectionString')]"
 					},
 					"AzureDLSLinkedService_properties_typeProperties_url": {
 						"value": "[parameters('AzureDLSLinkedService_properties_typeProperties_url')]"

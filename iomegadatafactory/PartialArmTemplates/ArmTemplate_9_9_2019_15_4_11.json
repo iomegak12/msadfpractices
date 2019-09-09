@@ -6,306 +6,12 @@
 			"type": "string",
 			"metadata": "Data Factory Name",
 			"defaultValue": "iomegadatafactory"
-		},
-		"AzureDLSLinkedService_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'AzureDLSLinkedService'"
-		},
-		"AzureBlobStorageLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageLinkedService'"
-		},
-		"AzureSQLDBLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSQLDBLinkedService'"
-		},
-		"AzureSQLDWLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSQLDWLinkedService'"
-		},
-		"AzureDLSLinkedService_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://iomegadls.dfs.core.windows.net"
-		},
-		"AzureKVLinkedService_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://iomegakv.vault.azure.net/"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureDLSLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('AzureDLSLinkedService_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('AzureDLSLinkedService_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureKVLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('AzureKVLinkedService_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureBlobStorageLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSQLDBLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSQLDBLinkedService_connectionString')]",
-					"password": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "AzureKVLinkedService",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "sqlpassword"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureKVLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSQLDWLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDW",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSQLDWLinkedService_connectionString')]",
-					"password": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "AzureKVLinkedService",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "sqlpassword"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureKVLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessedMessagesDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"BlobPath": {
-						"type": "string"
-					},
-					"BlobName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().BlobName",
-							"type": "Expression"
-						},
-						"container": {
-							"value": "@dataset().BlobPath",
-							"type": "Expression"
-						}
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessedBlobsToDLSDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDLSLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"targetBlobName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "processeddata"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Region",
-						"type": "String"
-					},
-					{
-						"name": "Plant",
-						"type": "String"
-					},
-					{
-						"name": "DeviceId",
-						"type": "String"
-					},
-					{
-						"name": "Temperature",
-						"type": "String"
-					},
-					{
-						"name": "Humidity",
-						"type": "String"
-					},
-					{
-						"name": "RecordedTime",
-						"type": "String"
-					},
-					{
-						"name": "TempStatus",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDLSLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessableBlobsDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSQLDBLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSQLDBLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureDWDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSQLDWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"schema": [
-					{
-						"name": "RecordId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Region",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Plant",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DeviceId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Temperature",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Humidity",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "RecordedTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "TempStatus",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "ProcessedRecords"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSQLDWLinkedService')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Process Blobs')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -331,8 +37,7 @@
 							},
 							"dataset": {
 								"referenceName": "ProcessableBlobsDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -520,8 +225,7 @@
 									"outputs": [
 										{
 											"referenceName": "AzureDWDataset",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								},
@@ -737,12 +441,167 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ProcessableBlobsDataset')]",
 				"[concat(variables('factoryId'), '/datasets/ProcessedMessagesDataset')]",
 				"[concat(variables('factoryId'), '/datasets/AzureDWDataset')]",
-				"[concat(variables('factoryId'), '/datasets/ProcessedBlobsToDLSDataset')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureSQLDBLinkedService')]"
+				"[concat(variables('factoryId'), '/datasets/ProcessedBlobsToDLSDataset')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDWDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSQLDWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "RecordId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Plant",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DeviceId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Temperature",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Humidity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "RecordedTime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "TempStatus",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ProcessedRecords"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessedMessagesDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"BlobPath": {
+						"type": "string"
+					},
+					"BlobName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().BlobName",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().BlobPath",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessedBlobsToDLSDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDLSLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"targetBlobName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "processeddata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Region",
+						"type": "String"
+					},
+					{
+						"name": "Plant",
+						"type": "String"
+					},
+					{
+						"name": "DeviceId",
+						"type": "String"
+					},
+					{
+						"name": "Temperature",
+						"type": "String"
+					},
+					{
+						"name": "Humidity",
+						"type": "String"
+					},
+					{
+						"name": "RecordedTime",
+						"type": "String"
+					},
+					{
+						"name": "TempStatus",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
 		}
 	]
 }

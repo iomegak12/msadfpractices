@@ -11,6 +11,12 @@
 		"AzureSQLDBLinkedService_connectionString": {
 			"value": ""
 		},
+		"AzureSQLDWLinkedService_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorageLinkedService_connectionString": {
+			"value": ""
+		},
 		"AzureDLSLinkedService_properties_typeProperties_url": {
 			"value": "https://iomegadls.dfs.core.windows.net"
 		},
