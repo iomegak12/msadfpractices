@@ -53,7 +53,7 @@
 							"typeProperties": {
 								"variableName": "BlobPath",
 								"value": {
-									"value": "@{item().Path}",
+									"value": "@substring(item().Path, 0, indexof(item().Path, item().BlobName))",
 									"type": "Expression"
 								}
 							}
@@ -61,14 +61,7 @@
 						{
 							"name": "Set Blob Name",
 							"type": "SetVariable",
-							"dependsOn": [
-								{
-									"activity": "Set Blob Path",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
+							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "BlobName",
