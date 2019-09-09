@@ -25,8 +25,71 @@
 					},
 					"firstRowOnly": false
 				}
+			},
+			{
+				"name": "Iterate All Blobs",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup Processable Blobs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Processable Blobs').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set Blob Path",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "BlobPath",
+								"value": {
+									"value": "@{item().Path}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set Blob Name",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Set Blob Path",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "BlobName",
+								"value": {
+									"value": "@{item().BlobName}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
 			}
 		],
+		"variables": {
+			"BlobPath": {
+				"type": "String"
+			},
+			"BlobName": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
