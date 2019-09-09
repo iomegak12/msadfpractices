@@ -710,7 +710,7 @@
 											},
 											"recordId": {
 												"value": {
-													"value": "@{item().BlobId}",
+													"value": "@{item().RecordId}",
 													"type": "Expression"
 												},
 												"type": "Int32"
