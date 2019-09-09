@@ -1,0 +1,26 @@
+{
+	"name": "ProcessedBlobsToDLSDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDLSLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"targetBlobName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "processeddata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
