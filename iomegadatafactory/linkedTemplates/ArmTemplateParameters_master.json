@@ -5,6 +5,15 @@
 		"factoryName": {
 			"value": "iomegadatafactory"
 		},
+		"AzureDLSLinkedService_accountKey": {
+			"value": ""
+		},
+		"AzureSQLDBLinkedService_connectionString": {
+			"value": ""
+		},
+		"AzureDLSLinkedService_properties_typeProperties_url": {
+			"value": "https://iomegadls.dfs.core.windows.net"
+		},
 		"AzureKVLinkedService_properties_typeProperties_baseUrl": {
 			"value": "https://iomegakv.vault.azure.net/"
 		},
