@@ -186,6 +186,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().targetBlobName",
+							"type": "Expression"
+						},
 						"fileSystem": "processeddata"
 					},
 					"columnDelimiter": ",",
@@ -564,7 +568,7 @@
 											"formatSettings": {
 												"type": "DelimitedTextWriteSettings",
 												"quoteAllText": true,
-												"fileExtension": ".txt"
+												"fileExtension": ""
 											}
 										},
 										"enableStaging": false,
