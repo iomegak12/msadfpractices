@@ -247,7 +247,7 @@
 								"sink": {
 									"type": "DelimitedTextSink",
 									"storeSettings": {
-										"type": "AzureBlobStorageWriteSettings"
+										"type": "AzureBlobFSWriteSettings"
 									},
 									"formatSettings": {
 										"type": "DelimitedTextWriteSettings",
@@ -350,14 +350,10 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ProcessedMessagesDataset",
+									"referenceName": "ProcessedBlobsToDLSDataset",
 									"type": "DatasetReference",
 									"parameters": {
-										"BlobPath": {
-											"value": "@variables('BlobPath')",
-											"type": "Expression"
-										},
-										"BlobName": {
+										"targetBlobName": {
 											"value": "@variables('BlobName')",
 											"type": "Expression"
 										}
